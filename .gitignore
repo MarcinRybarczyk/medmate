@@ -22,3 +22,8 @@ env/
 Thumbs.db
 .idea/
 .vscode/
+
+# Generated demo video (large binary) + render workspace - not pushed
+medmate_demo.mp4
+*.mp4
+build/
