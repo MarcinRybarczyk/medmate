@@ -124,6 +124,39 @@ Environment variables:
 
 ---
 
+## Verification
+
+The code is **import-verified** against a real install of the SDKs (not just a
+syntax check). Versions confirmed to import and pass tests:
+
+| Package | Version | How verified |
+|---------|---------|--------------|
+| `google-adk` | **2.3.0** | `import agent` succeeds; `root_agent` builds with its 3 sub-agents. |
+| `mcp` | **1.28.0** | `import mcp_server` succeeds; `FastMCP("drug-info")` + both tools register. |
+
+Both are pinned with `==` in `requirements.txt` (Python 3.13). Run the tests:
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+`tests/test_mcp_server.py` covers the MCP tools (`check_interaction` known
+pair / no-interaction / unknown drug; `drug_summary` known / unknown) and the
+`redact()` PII scrubber (SSN, email, long IDs masked; doses/years preserved).
+Tests make **no network or model calls** — `conftest.py` sets a dummy key so
+`import agent` works offline.
+
+## Demo (offline, no API cost)
+
+`python demo.py` prints an illustrative walkthrough — example user inputs and
+which sub-agent MedMate would route each to (incl. the emergency-escalation
+guardrail). It uses keyword heuristics for the preview; the **real** routing is
+LLM-driven by the ADK root agent at runtime. Useful for narrating the demo
+video without spending API quota.
+
+---
+
 ## Safety
 
 MedMate is **informational only and is not a medical device**. Its guardrails:
@@ -151,8 +184,17 @@ data source, complete proper de-identification, and get clinical review.
 
 - `agent.py` — ADK app: root **MedMate** concierge, three sub-agents, `redact()`, safety rules, MCP wiring.
 - `mcp_server.py` — `drug-info` MCP server with two read-only tools over a demo dataset.
+- `demo.py` — offline illustrative routing walkthrough (no API calls).
 - `make_cover.py` — renders `cover.png` (560×280 thumbnail) and `architecture.png` (1280×720).
-- `requirements.txt`, `.gitignore`, `LICENSE` — deps, ignore rules (excludes `.env`/keys), MIT license.
+- `tests/test_mcp_server.py` + `conftest.py` — pytest suite (MCP tools + `redact()`).
+- `requirements.txt` (pinned) / `requirements-dev.txt` (adds `pytest`) — dependencies.
+- `.env.example` — copy to `.env` (gitignored) and set `GOOGLE_API_KEY`.
+- `.gitignore`, `LICENSE` — ignore rules (excludes `.env`, `venv/`, keys), MIT license.
+
+> The drug dataset in `mcp_server.py` is a **deliberate demo** (a handful of
+> drugs/interactions) so the project runs offline with zero credentials. Swap it
+> for a licensed source (NLM **RxNorm**/RxNav + **openFDA**) behind the same two
+> tool signatures before any real-world use — the agent code does not change.
 
 ---
 

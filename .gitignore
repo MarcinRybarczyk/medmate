@@ -1,6 +1,8 @@
 # Secrets / credentials — NEVER commit these
 .env
 .env.*
+# the template IS tracked (contains no real key)
+!.env.example
 *.key
 *.pem
 *_secret*

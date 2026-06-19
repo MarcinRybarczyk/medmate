@@ -1,11 +1,10 @@
-# MedMate runtime dependencies.
+# MedMate runtime dependencies (pinned to versions verified to import — see README "Verification").
 #
 # google-adk : Google Agent Development Kit — LlmAgent, multi-agent routing,
 #              MCP tool integration, and the `adk web` / `adk run` runners.
 # mcp        : Model Context Protocol SDK — provides FastMCP (server) and the
 #              stdio client transport the InteractionAgent connects through.
 #
-# Pin to majors you have tested; unpinned here so judges get the latest compatible
-# releases. The MCP wiring in agent.py targets google-adk >= 1.0.
-google-adk
-mcp
+# Import-verified on Python 3.13, Windows. See requirements-dev.txt for test deps.
+google-adk==2.3.0
+mcp==1.28.0
