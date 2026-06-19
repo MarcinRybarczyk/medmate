@@ -27,3 +27,6 @@ Thumbs.db
 medmate_demo.mp4
 *.mp4
 build/
+
+# Runtime logs (may contain transcript content) - keep local
+logs/

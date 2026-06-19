@@ -1,10 +1,12 @@
 # MedMate runtime dependencies (pinned to versions verified to import — see README "Verification").
 #
-# google-adk : Google Agent Development Kit — LlmAgent, multi-agent routing,
-#              MCP tool integration, and the `adk web` / `adk run` runners.
-# mcp        : Model Context Protocol SDK — provides FastMCP (server) and the
-#              stdio client transport the InteractionAgent connects through.
+# google-adk    : Google Agent Development Kit — LlmAgent, multi-agent routing,
+#                 MCP tool integration, and the `adk web` / `adk run` runners.
+# mcp           : Model Context Protocol SDK — FastMCP (server) + stdio client.
+# python-dotenv : loads GOOGLE_API_KEY from a local .env (gitignored) into the
+#                 environment. The key is NEVER hard-coded or committed.
 #
 # Import-verified on Python 3.13, Windows. See requirements-dev.txt for test deps.
 google-adk==2.3.0
 mcp==1.28.0
+python-dotenv==1.2.2
