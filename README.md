@@ -138,14 +138,26 @@ Both are pinned with `==` in `requirements.txt` (Python 3.13). Run the tests:
 
 ```bash
 pip install -r requirements-dev.txt
-pytest -q
+pytest -q          # 14 passed
 ```
 
-`tests/test_mcp_server.py` covers the MCP tools (`check_interaction` known
-pair / no-interaction / unknown drug; `drug_summary` known / unknown) and the
-`redact()` PII scrubber (SSN, email, long IDs masked; doses/years preserved).
-Tests make **no network or model calls** — `conftest.py` sets a dummy key so
-`import agent` works offline.
+**What the suite covers (no network / no model / no API key needed):**
+
+| Test file | What it verifies |
+|-----------|------------------|
+| `tests/test_mcp_server.py` (unit) | Pure tool logic: `check_interaction` (known pair / no-interaction / unknown drug / order-independent), `drug_summary` (known / unknown), and `redact()` (SSN + email + long IDs masked; doses/years preserved). |
+| `tests/test_integration.py` (integration) | **Real wiring**: spawns `mcp_server.py` as a stdio child and talks the actual MCP protocol (lists both tools, calls each); confirms the ADK `McpToolset` connects to the server and lists the same two tools; confirms the `redact()` before-model callback mutates a request in place. |
+
+`conftest.py` sets a dummy key so `import agent` works offline. The `adk` CLI
+(`adk web` / `adk run`) is present in the install and the agent object
+(`root_agent` + its 3 sub-agents) builds successfully.
+
+**Not auto-tested (requires your own key + paid quota):** the live end-to-end
+conversation through the LLM — i.e. the model actually *deciding* which
+sub-agent to route to inside `adk web` / `adk run`. To check that last mile
+manually: set `GOOGLE_API_KEY`, run `adk web`, pick **MedMate**, and try the
+four prompts from `demo.py` (schedule / interaction / visit-prep / emergency).
+Everything *up to* the model call is verified by the tests above.
 
 ## Demo (offline, no API cost)
 
